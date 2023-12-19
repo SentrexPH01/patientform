@@ -8,6 +8,16 @@ import axios from "axios";
 import { useState } from "react";
 import logo from '/vch-logo.svg'
 
+
+const Asterisk = () => (
+  <span
+    className="text-red-500 inline-block"
+    style={{ verticalAlign: 'top', marginRight: '0.2em' }}
+  >
+    *
+  </span>
+)
+
 const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
 const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
 const yourRedirectUri = import.meta.env.VITE_AZURE_REDIRECT_URL;
@@ -25,6 +35,7 @@ const validationSchema = Yup.object().shape({
   postalCode: Yup.string().required("Postal Code is required"),
   province: Yup.string().required("Province is required"),
   publicHealthCardNumber: Yup.string().required("Public Health Card Number is required"),
+  consentAcknowledge: Yup.array().required("Consent acknowledge is required"),
   // signature: Yup.string().required("Signature is required"),
 });
 
@@ -40,6 +51,7 @@ const initialValues = {
   province: "",
   publicHealthCardNumber: "",
   signature: "",
+  consentAcknowledge: "",
 };
 
 
@@ -92,7 +104,7 @@ function App() {
   const signaturePad = React.useRef();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 font-Roboto">
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
@@ -105,20 +117,21 @@ function App() {
         <div className="flex mb-4">
           <div className="w-1/2 pr-2">
             <label htmlFor="firstName" className="block text-sm font-bold mb-2">
-              First Name:
+              <Asterisk />First Name:
             </label>
             <Field
               type="text"
               id="firstName"
               name="firstName"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              
             />
             <ErrorMessage name="firstName" component="p" className="text-red-500 text-xs mt-1" />
           </div>
 
           <div className="w-1/2 pl-2">
             <label htmlFor="lastName" className="block text-sm font-bold mb-2">
-              Last Name:
+            <Asterisk />Last Name:
             </label>
             <Field
               type="text"
@@ -134,7 +147,7 @@ function App() {
          {/* Public Health Card Number */}
          <div className="mb-4">
             <label htmlFor="publicHealthCardNumber" className="block text-sm font-bold mb-2">
-              Care Card Number:
+            <Asterisk />Care Card Number:
             </label>
             <Field
               type="text"
@@ -152,7 +165,7 @@ function App() {
           {/* Date of Birth */}
           <div className="mb-4">
             <label htmlFor="dateOfBirth" className="block text-sm font-bold mb-2">
-              Date of Birth:
+            <Asterisk />Date of Birth:
             </label>
             <Field
               type="date"
@@ -166,7 +179,7 @@ function App() {
          {/* Phone Number */}
          <div className="mb-4">
             <label htmlFor="phoneNumber" className="block text-sm font-bold mb-2">
-              Phone Number:
+            <Asterisk />Phone Number:
             </label>
             <Field
               type="tel"
@@ -226,7 +239,7 @@ function App() {
           {/* Address Section */}
           <div className="mb-4">
             <label htmlFor="address" className="block text-sm font-bold mb-2">
-              Address:
+            <Asterisk />Address:
             </label>
             <Field
               type="text"
@@ -240,7 +253,7 @@ function App() {
 
           <div className="mb-4">
               <label htmlFor="city" className="block text-sm font-bold mb-2">
-                City:
+              <Asterisk />City:
               </label>
               <Field
                 type="text"
@@ -255,7 +268,7 @@ function App() {
           <div className="mb-4 flex">
             <div className="w-1/2 mr-2">
               <label htmlFor="postalCode" className="block text-sm font-bold mb-2">
-                Postal Code:
+              <Asterisk />Postal Code:
               </label>
               <Field
                 type="text"
@@ -269,7 +282,7 @@ function App() {
 
             <div className="w-1/2 ml-2">
               <label htmlFor="province" className="block text-sm font-bold mb-2">
-                Province:
+              <Asterisk />Province:
               </label>
               <Field
                 type="text"
@@ -426,14 +439,15 @@ function App() {
                 <label className="mb-2">
                 <Field
                   type="checkbox"
-                  name="iAmNotOnTherapyForMsNmo"
-                  value="Other"
+                  name="consentAcknowledge"
+                  value="consentAcknowledge"
                   className="mr-2"
+                  
                 />
-                I acknowledge, understand, and agree to the above. 
-                {/* Conditional rendering of the text input based on the "Other" checkbox */}
-                
+                <Asterisk />I acknowledge, understand, and agree to the above. 
+                <ErrorMessage name="consentAcknowledge" component="p" className="text-red-500 text-xs mt-1" />
               </label>
+              
               </div>
 
 
@@ -669,6 +683,34 @@ function App() {
                 <ErrorMessage name="signature" component="p" className="text-red-500 text-xs mt-1" />
   
 </div>
+<p className="text-sm mb-2">If verbal consent was obtained from a Substitute Decision Maker (SDM) please provide the following details:</p>
+
+<div className="mb-4">
+    <label htmlFor="verbalConsentObtainedBy" className="block text-sm font-bold mb-2">
+      Name of SDM:
+    </label>
+
+      <Field
+        type="text"
+        id="verbalConsentObtainedBy"
+        name="verbalConsentObtainedBy"
+        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+      />
+    <ErrorMessage name="verbalConsentObtainedBy" component="p" className="text-red-500 text-xs mt-1" />
+    <label htmlFor="relationshipToPatient" className="block text-sm font-bold mb-2 mt-2">
+              Relationship of SDM to Patient:
+            </label>
+            
+              <Field
+                type="text"
+                id="relationshipToPatient"
+                name="relationshipToPatient"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              />
+            <ErrorMessage name="relationshipToPatient" component="p" className="text-red-500 text-xs mt-1" />
+  </div>
+  
+
             </div>
             )
           }
