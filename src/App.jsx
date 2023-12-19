@@ -1,10 +1,11 @@
 // src/App.jsx
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 import SignatureCanvas from "react-signature-canvas";
 import textTermsAndConditions from "./TextContent";
 import axios from "axios";
+import { useState, useEffect } from "react";
 
 const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
 const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
@@ -79,6 +80,14 @@ const onSubmit = async (values, { setSubmitting }) => {
 
 function App() {
 
+
+  const [showHide, setShowHide] = useState('');
+
+  const handleShowHide = (event) => {
+    const getIam = event.target.value;
+    setShowHide(getIam);
+  }
+
   const signaturePad = React.useRef();
 
   return (
@@ -124,7 +133,7 @@ function App() {
          {/* Public Health Card Number */}
          <div className="mb-4">
             <label htmlFor="publicHealthCardNumber" className="block text-sm font-bold mb-2">
-              Public Health Card Number:
+              Care Card Number:
             </label>
             <Field
               type="text"
@@ -288,43 +297,30 @@ function App() {
 
           {/* Physician Field*/}
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-bold mb-2">
-            Physician Name:
+            <label htmlFor="physician" className="block text-sm font-bold mb-2">
+              Physician Name:
             </label>
             <Field
-              type="text"
+              as="select"
               id="physician"
               name="physician"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-            <ErrorMessage name="email" component="p" className="text-red-500 text-xs mt-1" />
+            >
+              <option value="">Please Select Physician</option>
+              <option value="physician1">DR. VIRGINIA DEVONSHIRE</option>
+              <option value="physician2">DR. ANTHONY TRABOULSEE</option>
+              <option value="physician3">DR. ANA-LUIZA SAYAO</option>
+              <option value="physician4">DR. ROBERT CARRUTHERS</option>
+              <option value="physician5">DR. ALICE SCHABAS</option>
+            </Field>
+            <ErrorMessage name="physician" component="p" className="text-red-500 text-xs mt-1" />
           </div>
 
-          {/* Therapies */}
-          <div className="mb-4">
-            <p className="text-sm font-bold mb-2">Are you on Multiple Sclerosis/Neuromyelitis Optica Therapies: </p>
-            <div className="flex">
-              {[
-                { label: 'Yes', value: 'yes' },
-                { label: 'No', value: 'no' },
-              ].map(({ label, value }) => (
-                <label key={value} className="mr-4">
-                  <Field
-                    type="checkbox"
-                    name="therapiesCheckbox"
-                    value={value}
-                    className="mr-2"
-                  />
-                  {label}
-                </label>
-              ))}
-            </div>
-            <ErrorMessage name="therapies" component="p" className="text-red-500 text-xs mt-1" />
-          </div>
+          
 
           {/* If Yes Select */}
           <div className="mb-4">
-            <p className="text-sm font-bold mb-2">If Yes, please select from below: </p>
+            <p className="text-sm font-bold mb-2">If you are on therapy for Multiple Sclerosis (MS) or Neuromyelitis Optica (NMO) please select which medication you are taking:  </p>
             <div className="flex flex-col">
               {[
                 { label: 'Aubagio (Teriflunimide)', value: 'Aubagio (Teriflunimide)' },
@@ -364,6 +360,19 @@ function App() {
                   className="ml-2 pl-2 border rounded-md"
                   placeholder=""
                 />
+                
+              </label>
+
+              <label className="mr-4 mb-2">
+                <Field
+                  type="radio"
+                  name="iAmNotOnTherapyForMsNmo"
+                  value="Other"
+                  className="mr-2"
+                />
+                I am not on therapy for MS/NMO
+                {/* Conditional rendering of the text input based on the "Other" checkbox */}
+                
               </label>
             </div>
             <ErrorMessage name="typeOfTherapies" component="p" className="text-red-500 text-xs mt-1" />
@@ -372,7 +381,7 @@ function App() {
           {/* Primary Insurance Provider */}
             <div className="mb-4">
               <label htmlFor="primaryInsuranceProvider" className="block text-sm font-bold mb-2">
-                Primary Insurance Provider:
+               Name of Private Insurance Provider:
               </label>
               <Field
                 type="text"
@@ -386,7 +395,7 @@ function App() {
             {/* Insurer Contract # */}
             <div className="mb-4">
               <label htmlFor="insurerContract" className="block text-sm font-bold mb-2">
-                Insurer Contract #:
+                Insurer Group Plan #:
               </label>
               <Field
                 type="text"
@@ -419,33 +428,69 @@ function App() {
               <div className="mb-4">
 
               <h3 className="mb-2 font-bold">PATIENT CONSENT TO ENROL IN AND RECEIVE SERVICES FROM SENTREX</h3>
-                <p className="text-sm mb-2 whitespace-pre-line">
+                <p className="text-sm mb-4 whitespace-pre-line">
                 {textTermsAndConditions}
                 </p>
+              
+                <label className="mb-2">
+                <Field
+                  type="checkbox"
+                  name="iAmNotOnTherapyForMsNmo"
+                  value="Other"
+                  className="mr-2"
+                />
+                I acknowledge, understand, and agree to the above. 
+                {/* Conditional rendering of the text input based on the "Other" checkbox */}
+                
+              </label>
               </div>
 
 
+              {/* I AM Patien Consent */}
+          <div className="mb-4" >
+          <h3 className="mb-4 font-bold flex-none">PATIENT CONSENT </h3>
+          <div className="flex items-end">
+            <label htmlFor="thePatientConsent" className="inline-block text-sm font-bold mb-2 mr-2">
+              I am:
+            </label>
+            <Field
+              as="select"
+              id="thePatientConsent"
+              name="thePatientConsent"
+              className="flex px-3 py-1.5 border rounded-md focus:outline-none focus:border-blue-500"
+              onChange={(e) =>(handleShowHide(e))}
+            >
+              <option value="">Please select one of the following options</option>
+              <option value="thePatient">The patient</option>
+              <option value="theSDM">The patient’s Substitute Decision Maker (SDM) </option>
+              <option value="theHCP">An HCP obtaining verbal consent on behalf of the patient</option>
+              
+            </Field>
+            <ErrorMessage name="thePatientConsent" component="p" className="text-red-500 text-xs mt-1" />
+            </div>
+
+          </div>
 
 
-        {/* Signature field */}
-      <div className="mb-4">
-        <label htmlFor="signature" className="block text-sm font-bold mb-2">
-          Patient&apos;s Signature:
-        </label>
-        <div className="border border-gray-300 rounded-md p-4">
-          <SignatureCanvas
-            ref={signaturePad}
-            penColor="black"
-            canvasProps={{
-              className: 'w-full h-20',
-            }}
-          />
-        </div>
-        <ErrorMessage name="signature" component="p" className="text-red-500 text-xs mt-1" />
-      </div>
-
-      {/* Buttons */}
-      <div className="flex space-x-4 mb-4">
+           {/* IF I AM PATIENT is SELECTED */}
+          {
+            showHide === 'thePatient' && (
+              <div className="mb-4">
+              <p className="mb-4 text-sm">I have read this consent form and/or it has been read to me. I give consent for Sentrex to dispense my medication(s) and/or transfer my prescription to Sentrex Pharmacy and enroll in systems supported by the Sentrex Pharmacy.  I authorize the use and disclosure of my Information as outlined in this form.</p>
+                <label htmlFor="signature" className="block text-sm font-bold mb-2">
+                 Signature of Patient:
+                </label>
+                <div className="border border-gray-300 rounded-md p-4">
+                  <SignatureCanvas
+                    ref={signaturePad}
+                    penColor="black"
+                    canvasProps={{
+                      className: 'w-full h-20',
+                    }}
+                  />
+                </div>
+                <ErrorMessage name="signature" component="p" className="text-red-500 text-xs mt-1" />
+                <div className="flex space-x-4 mb-4 mt-2">
         <button
           type="button"
           onClick={() => {
@@ -459,18 +504,70 @@ function App() {
 
         
       </div>
-
-
-          {/* Date input for Patient Signature */}
-          <div className="mb-8 mt-3 flex items-end">
+                <div className="mb-8 mt-3 flex items-end">
             <label htmlFor="patientSignatureDate" className="block text-sm font-bold mr-2">
-              Date of Patient&apos;s Signature:
+              Date:
             </label>
             <div className="relative">
               <Field
                 type="date"
-                id="patientSignatureDate"
-                name="patientSignatureDate"
+                id="iAmPatientDate"
+                name="iAmPatientDate"
+                className="mt-2 px-3 py-1 border-none focus:outline-none"
+              />
+              <div className="absolute left-0 right-0 bottom-0 h-px bg-gray-500" />
+            </div>
+
+            <ErrorMessage name="iAmPatientDate" component="p" className="text-red-500 text-xs mt-1" />
+          </div>
+              </div>
+              
+            )
+          }
+
+          
+           {/* IF I AM SDM is SELECTED */}
+           {
+            showHide === 'theSDM' && (
+            
+              <div className="mb-4">
+              <p className="mb-4 text-sm">I have read this consent form and/or it has been read to me. I give consent for Sentrex to dispense my medication(s) and/or transfer my prescription to Sentrex Pharmacy and enroll in systems supported by the Sentrex Pharmacy.  I authorize the use and disclosure of my Information as outlined in this form.</p>
+                <label htmlFor="signature" className="block text-sm font-bold mb-2">
+                  Signature of Patient&apos;s Substitute Maker (SDM):
+                </label>
+                <div className="border border-gray-300 rounded-md p-4">
+                  <SignatureCanvas
+                    ref={signaturePad}
+                    penColor="black"
+                    canvasProps={{
+                      className: 'w-full h-20',
+                    }}
+                  />
+                </div>
+                <ErrorMessage name="signature" component="p" className="text-red-500 text-xs mt-1" />
+                <div className="flex space-x-4 mb-4 mt-2">
+        <button
+          type="button"
+          onClick={() => {
+            const signatureData = signaturePad.current.toDataURL();
+            console.log('Signature Data:', signatureData);
+          }}
+          className="w-full bg-blue-500 text-white py-2 rounded-md"
+        >
+          Save Signature
+        </button>
+
+        
+      </div>
+                <div className="mb-8 mt-3 flex items-end">
+            <label htmlFor="patientSignatureDate" className="block text-sm font-bold mr-2">
+              Date:
+            </label>
+            <div className="relative">
+              <Field
+                type="date"
+                id="iAmSDMDate"
+                name="iAmSDMDate"
                 className="mt-2 px-3 py-1 border-none focus:outline-none"
               />
               <div className="absolute left-0 right-0 bottom-0 h-px bg-gray-500" />
@@ -478,14 +575,6 @@ function App() {
 
             <ErrorMessage name="patientSignatureDate" component="p" className="text-red-500 text-xs mt-1" />
           </div>
-
-
-
-
-
-
-
-        {/* Printed Name of Patient or Patient’s SDM */}
           <div className="mb-4">
             <label htmlFor="patientPrintedNameOrSDM" className="block text-sm font-bold mb-2">
               Printed Name of Patient or Patient’s SDM:
@@ -498,9 +587,6 @@ function App() {
               />
             <ErrorMessage name="patientPrintedNameOrSDM" component="p" className="text-red-500 text-xs mt-1" />
           </div>
-
-
-          {/* Relationship of SDM to Patient */}
           <div className="mb-4">
             <label htmlFor="relationshipToPatient" className="block text-sm font-bold mb-2">
               Relationship of SDM to Patient:
@@ -514,32 +600,47 @@ function App() {
               />
             <ErrorMessage name="relationshipToPatient" component="p" className="text-red-500 text-xs mt-1" />
           </div>
+          </div>
+            )
+          }
 
-          {/* Verbal Consent */}
-          <div className="mb-4 mt-5">
+          {/* IF I AM HCP is SELECTED */}
+          {
+            showHide === 'theHCP' && (
+            <div className="mb-4">
+            <p className="mb-4 text-sm">I have read this consent form and/or it has been read to me. I give consent for Sentrex to dispense my medication(s) and/or transfer my prescription to Sentrex Pharmacy and enroll in systems supported by the Sentrex Pharmacy.  I authorize the use and disclosure of my Information as outlined in this form.</p>
+            <div className="mb-4 mt-5">
             
               
-              <label className="mr-4 mb-2 text-sm font-bold">
+              <label className="mr-4 mb-2 text-sm">
+                
+                <span className="font-bold">Verbal Consent Obtained From: </span>
                 <Field
                   type="checkbox"
-                  name="VerbalConsent"
-                  value="VerbalConsent"
-                  className="mr-2 "
-                />
-                Verbal Consent Obtained: I have read the above consent to Patient
+                  name="verbalConsentPatient"
+                  value="verbalConsentPatient"
+                  className="mr-2 ml-2"
+                /> Patient
+                </label>
+                <label className="mr-4 mb-2 text-sm">
+                <Field
+                  type="checkbox"
+                  name="verbalConsentSDM"
+                  value="verbalConsentSDM"
+                  className="mr-2 ml-2"
+                  />
+                  Patient’s Substitute Decision Maker 
                 {/* Conditional rendering of the text input based on the "Other" checkbox */}
                 
               </label>
             
             <ErrorMessage name="verbalConsentPatientTo" component="p" className="text-red-500 text-xs mt-1" />
           </div>
-
-          
           <div className="mb-4 mt-3">
   {/* Verbal Consent Obtained By */}
   <div className="mb-4">
     <label htmlFor="verbalConsentObtainedBy" className="block text-sm font-bold mb-2">
-      Verbal Consent Obtained By:
+      Verbal Consent Obtained by (Name of HCP):
     </label>
       <Field
         type="text"
@@ -555,7 +656,7 @@ function App() {
   {/* Verbal Consent Date input */}
   <div className="flex items-end">
     <label htmlFor="verbalConsentDate" className="block text-sm font-bold mr-2">
-      Date of Verbal Consent:
+      Date:
     </label>
     <div className="relative">
       <Field
@@ -568,12 +669,24 @@ function App() {
     </div>
     <ErrorMessage name="verbalConsentDate" component="p" className="text-red-500 text-xs mt-1" />
   </div>
+  <label htmlFor="signature" className="block text-sm font-bold mb-2 mt-2">
+                  HCP Signature:
+                </label>
+                <div className="border border-gray-300 rounded-md p-4">
+                  <SignatureCanvas
+                    ref={signaturePad}
+                    penColor="black"
+                    canvasProps={{
+                      className: 'w-full h-20',
+                    }}
+                  />
+                </div>
+                <ErrorMessage name="signature" component="p" className="text-red-500 text-xs mt-1" />
+  
 </div>
-
-
-
-
-
+            </div>
+            )
+          }
         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md mt-4">
           Submit Consent Form
         </button>
