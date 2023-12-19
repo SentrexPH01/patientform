@@ -5,7 +5,8 @@ import * as Yup from "yup";
 import SignatureCanvas from "react-signature-canvas";
 import textTermsAndConditions from "./TextContent";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import logo from '/vch-logo.svg'
 
 const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
 const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
@@ -98,7 +99,7 @@ function App() {
       onSubmit={onSubmit}
     >
       <Form className="w-full max-w-3xl bg-white p-8 rounded-md shadow-md">
-        <h1 className="text-2xl font-bold mb-10 text-center">VCH Patient Consent Form</h1>
+        <h1 className="text-2xl font-bold mb-10 text-center"><img src={logo} alt='logo' />VCH Patient Consent Form</h1>
 
         {/* First Name and Last Name in a flex container */}
         <div className="flex mb-4">
@@ -209,7 +210,7 @@ function App() {
               ].map(({ label, value }) => (
                 <label key={value} className="mr-4">
                   <Field
-                    type="checkbox"
+                    type="radio"
                     name="canLeaveVoiceMail"
                     value={value}
                     className="mr-2"
@@ -333,6 +334,7 @@ function App() {
                 { label: 'Riximyo/Ruxience (Rituximab)', value: 'Riximyo/Ruxience (Rituximab)' },
                 { label: 'Tecfidera (Dimethyl Fumarate)', value: 'Tecfidera (Dimethyl Fumarate)' },
                 { label: 'Tysabri (Natalizumab)', value: 'Tysabri (Natalizumab)' },
+                { label: 'I am not on therapy for MS/NMO', value: 'I am not on therapy for MS/NMO' },
               ].map(({ label, value }) => (
                 <label key={value} className="mr-4 mb-2">
                   <Field
@@ -363,17 +365,6 @@ function App() {
                 
               </label>
 
-              <label className="mr-4 mb-2">
-                <Field
-                  type="radio"
-                  name="iAmNotOnTherapyForMsNmo"
-                  value="Other"
-                  className="mr-2"
-                />
-                I am not on therapy for MS/NMO
-                {/* Conditional rendering of the text input based on the "Other" checkbox */}
-                
-              </label>
             </div>
             <ErrorMessage name="typeOfTherapies" component="p" className="text-red-500 text-xs mt-1" />
           </div>
@@ -395,7 +386,7 @@ function App() {
             {/* Insurer Contract # */}
             <div className="mb-4">
               <label htmlFor="insurerContract" className="block text-sm font-bold mb-2">
-                Insurer Group Plan #:
+                Insurer Group/Contract/Plan #:
               </label>
               <Field
                 type="text"
@@ -577,7 +568,7 @@ function App() {
           </div>
           <div className="mb-4">
             <label htmlFor="patientPrintedNameOrSDM" className="block text-sm font-bold mb-2">
-              Printed Name of Patient or Patient’s SDM:
+              Printed Name of Patient’s SDM:
             </label>
               <Field
                 type="text"
@@ -610,29 +601,23 @@ function App() {
             <div className="mb-4">
             <p className="mb-4 text-sm">I have read this consent form and/or it has been read to me. I give consent for Sentrex to dispense my medication(s) and/or transfer my prescription to Sentrex Pharmacy and enroll in systems supported by the Sentrex Pharmacy.  I authorize the use and disclosure of my Information as outlined in this form.</p>
             <div className="mb-4 mt-5">
-            
-              
-              <label className="mr-4 mb-2 text-sm">
-                
-                <span className="font-bold">Verbal Consent Obtained From: </span>
-                <Field
-                  type="checkbox"
-                  name="verbalConsentPatient"
-                  value="verbalConsentPatient"
-                  className="mr-2 ml-2"
-                /> Patient
-                </label>
-                <label className="mr-4 mb-2 text-sm">
-                <Field
-                  type="checkbox"
-                  name="verbalConsentSDM"
-                  value="verbalConsentSDM"
-                  className="mr-2 ml-2"
+            <span className="font-bold text-sm mr-2">Verbal Consent Obtained From: </span>
+            {[
+                { label: 'Patient', value: 'yes' },
+                { label: 'Patient’s Substitute Decision Maker ', value: 'no' },
+              ].map(({ label, value }) => (
+                <label key={value} className="mr-4">
+                  <Field
+                    type="radio"
+                    name="hcpVerbalConsentRadip"
+                    value={value}
+                    className="mr-2"
                   />
-                  Patient’s Substitute Decision Maker 
-                {/* Conditional rendering of the text input based on the "Other" checkbox */}
-                
-              </label>
+                  {label}
+                </label>
+              ))}
+              
+             
             
             <ErrorMessage name="verbalConsentPatientTo" component="p" className="text-red-500 text-xs mt-1" />
           </div>
@@ -655,7 +640,7 @@ function App() {
 <div className="mb-4">
   {/* Verbal Consent Date input */}
   <div className="flex items-end">
-    <label htmlFor="verbalConsentDate" className="block text-sm font-bold mr-2">
+    <label htmlFor="verbalConsentDate" className="block text-sm font-bold mb-2">
       Date:
     </label>
     <div className="relative">
@@ -669,7 +654,7 @@ function App() {
     </div>
     <ErrorMessage name="verbalConsentDate" component="p" className="text-red-500 text-xs mt-1" />
   </div>
-  <label htmlFor="signature" className="block text-sm font-bold mb-2 mt-2">
+  <label htmlFor="signature" className="block text-sm font-bold mb-2 mt-4">
                   HCP Signature:
                 </label>
                 <div className="border border-gray-300 rounded-md p-4">
