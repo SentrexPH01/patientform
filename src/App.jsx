@@ -4,9 +4,12 @@ import { Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 import SignatureCanvas from "react-signature-canvas";
 import textTermsAndConditions from "./TextContent";
-import axios from "axios";
+// import axios from "axios";
 import { useState } from "react";
 import logo from '/vch-logo.svg'
+import sentrexLogo from '/Logo_Sentrex.png'
+// import html2pdf from "html2pdf.js";
+
 
 
 const Asterisk = () => (
@@ -18,12 +21,44 @@ const Asterisk = () => (
   </span>
 )
 
-const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
-const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
-const yourRedirectUri = import.meta.env.VITE_AZURE_REDIRECT_URL;
-const yourSharePointSiteUrl = import.meta.env.VITE_SHAREPOINT_SITE_URL;
-const yourListName = import.meta.env.VITE_SHAREPOINT_LIST_NAME;
-const yourAccessToken = import.meta.env.VITE_ACCESS_TOKEN;
+const Optional = () => (
+  <span
+    className="font-normal text-sm text-slate-700"
+  >
+    (Optional)
+  </span>
+
+)
+
+// const generatePdf = async () => {
+//   try {
+//     const formElement = document.getElementById('patient-form');
+//     // const pdfOptions = {
+//     //   margin: [10,10],
+//     //   filename: 'consent_form.pdf',
+//     //   image: { type: 'jpeg', quality: 0.98 },
+//     //   html2canvas: { scale: 1.5, letterRendering: true },
+//     //   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', putOnlyUsedFonts:true, floatPrecision: 16 },
+//     //   pagebreak: {
+//     //     mode: ['avoid-all', 'css', 'legacy'],
+//     //     before: '.page-break-after',
+//     //   }
+      
+//     // };
+
+//     await html2pdf().from(formElement).set().save();
+//     console.log('PDF generated successfully');
+//   } catch (error) {
+//     console.error('Error generating PDF:', error);
+//   }
+// };
+
+// const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
+// const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
+// const yourRedirectUri = import.meta.env.VITE_AZURE_REDIRECT_URL;
+// const yourSharePointSiteUrl = import.meta.env.VITE_SHAREPOINT_SITE_URL;
+// const yourListName = import.meta.env.VITE_SHAREPOINT_LIST_NAME;
+// const yourAccessToken = import.meta.env.VITE_ACCESS_TOKEN;
 
 const validationSchema = Yup.object().shape({
   address: Yup.string().required("Address is required"),
@@ -56,40 +91,61 @@ const initialValues = {
 
 
 
-const onSubmit = async (values, { setSubmitting }) => {
-  try {
+// const onSubmit = async (values, { setSubmitting }) => {
+//   try {
 
     
-    // Make HTTP POST request to SharePoint API
-    const response = await axios.post(
-      `${yourSharePointSiteUrl}/_api/web/lists/getbytitle('${yourListName}')/items`,
-      {
-        // Map form values to SharePoint list columns
-        Title: values.firstName,
-        Address: values.address,
-        SignatureData: values.signatureData, // Adjust this based on your SharePoint column name
-        // Map other fields accordingly
-      },
-      {
-        headers: {
-          'Accept': 'application/json;odata=verbose',
-          'Content-Type': 'application/json;odata=verbose',
-          'Authorization': `Bearer ${yourAccessToken}`,
-          // Include Azure AD app details
-          'client_id': yourClientId,
-          'client_secret': yourClientSecret,
-          'redirect_uri': yourRedirectUri,
-        },
-      }
-    );
+//     // // Make HTTP POST request to SharePoint API
+//     // const response = await axios.post(
+//     //   `${yourSharePointSiteUrl}/_api/web/lists/getbytitle('${yourListName}')/items`,
+//     //   {
+//     //     // Map form values to SharePoint list columns
+//     //     Title: values.firstName,
+//     //     Address: values.address,
+//     //     SignatureData: values.signatureData, // Adjust this based on your SharePoint column name
+//     //     // Map other fields accordingly
+//     //   },
+//     //   {
+//     //     headers: {
+//     //       'Accept': 'application/json;odata=verbose',
+//     //       'Content-Type': 'application/json;odata=verbose',
+//     //       'Authorization': `Bearer ${yourAccessToken}`,
+//     //       // Include Azure AD app details
+//     //       'client_id': yourClientId,
+//     //       'client_secret': yourClientSecret,
+//     //       'redirect_uri': yourRedirectUri,
+//     //     },
+//     //   }
+//     // );
 
-    console.log('SharePoint API Response:', response.data);
-  } catch (error) {
-    console.error('Error submitting to SharePoint:', error);
-  } finally {
-    setSubmitting(false);
-  }
-};
+//   //   // Generate PDF Code
+//   // const formElement = document.documentElement; // Make sure to set an ID on your form
+//   // const pdfOptions = {
+//   //   margin: 10,
+//   //   filename: 'consent_form.pdf',
+//   //   image: { type: 'jpeg', quality: 0.98 },
+//   //   html2canvas: { scale: 2 },
+//   //   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+//   // };
+
+//   // await html2pdf().from(formElement).set(pdfOptions).save();
+//   // // If needed, you can log the generated PDF blob or URL
+//   // console.log('PDF generated successfully');
+
+//   //   console.log('SharePoint API Response:', response.data);
+//   // } catch (error) {
+//   //   console.error('Error submitting to SharePoint:', error);
+//   // } finally {
+//   //   setSubmitting(false);
+//   await generatePdf();
+//   // }
+// } catch (error) {
+//   console.error('Error generating PDF:', error);
+// } finally {
+//   setSubmitting(false);
+
+// }
+// };
 
 function App() {
 
@@ -104,26 +160,32 @@ function App() {
   const signaturePad = React.useRef();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 font-Roboto">
+    <div className="flex justify-center bg-gray-100 ">
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      // onSubmit={onSubmit}
     >
-      <Form className="w-full max-w-3xl bg-white p-8 rounded-md shadow-md">
-        <h1 className="text-2xl font-bold mb-10 text-center"><img src={logo} alt='logo' />VCH Patient Consent Form</h1>
+      <Form id="patient-form"
+      className="w-full max-w-5xl bg-white p-8 rounded-md shadow-md">
+        
+        <div className="flex justify-between">
+        <img className="h-10 w-35"src={logo} alt='logo' /><img className="h-10 w-35" src={sentrexLogo} alt='logo' />
+        </div>
+        <h1 className="text-2xl font-bold pt-2 pb-10 text-center">VCH Patient Consent Form</h1>
+        
 
         {/* First Name and Last Name in a flex container */}
-        <div className="flex mb-4">
+        <div className="flex pb-4">
           <div className="w-1/2 pr-2">
-            <label htmlFor="firstName" className="block text-sm font-bold mb-2">
+            <label htmlFor="firstName" className="block text-sm font-bold pb-2">
               <Asterisk />First Name:
             </label>
             <Field
               type="text"
               id="firstName"
               name="firstName"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-sm"
               
             />
             <ErrorMessage name="firstName" component="p" className="text-red-500 text-xs mt-1" />
@@ -137,7 +199,7 @@ function App() {
               type="text"
               id="lastName"
               name="lastName"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-sm"
             />
             <ErrorMessage name="lastName" component="p" className="text-red-500 text-xs mt-1" />
           </div>
@@ -153,7 +215,7 @@ function App() {
               type="text"
               id="publicHealthCardNumber"
               name="publicHealthCardNumber"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-sm"
             />
             <ErrorMessage
               name="publicHealthCardNumber"
@@ -171,7 +233,7 @@ function App() {
               type="date"
               id="dateOfBirth"
               name="dateOfBirth"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-sm"
             />
             <ErrorMessage name="dateOfBirth" component="p" className="text-red-500 text-xs mt-1" />
           </div>
@@ -185,14 +247,14 @@ function App() {
               type="tel"
               id="phoneNumber"
               name="phoneNumber"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 text-sm"
             />
             <ErrorMessage name="phoneNumber" component="p" className="text-red-500 text-xs mt-1" />
           </div>
 
           {/* Best Time to Call */}
           <div className="mb-4">
-            <p className="text-sm font-bold mb-2">Best Time to Call:</p>
+            <p className="text-sm font-bold mb-2">Best Time to Call: </p>
             <div className="flex">
               {[
                 { label: 'Morning', value: 'morning' },
@@ -298,7 +360,7 @@ function App() {
           {/* Email Field */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-bold mb-2">
-              Email:
+              Email: <Optional />
             </label>
             <Field
               type="email"
@@ -311,23 +373,30 @@ function App() {
 
           {/* Physician Field*/}
           <div className="mb-4">
-            <label htmlFor="physician" className="block text-sm font-bold mb-2">
+            <label htmlFor="physician" className="block text-sm font-bold pb-2">
               Physician Name:
             </label>
-            <Field
-              as="select"
-              id="physician"
-              name="physician"
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-            >
-              <option value="">Please Select Physician</option>
-              <option value="physician1">DR. VIRGINIA DEVONSHIRE</option>
-              <option value="physician2">DR. ANTHONY TRABOULSEE</option>
-              <option value="physician3">DR. ANA-LUIZA SAYAO</option>
-              <option value="physician4">DR. ROBERT CARRUTHERS</option>
-              <option value="physician5">DR. ALICE SCHABAS</option>
-            </Field>
-            <ErrorMessage name="physician" component="p" className="text-red-500 text-xs mt-1" />
+            <div className="flex flex-col text-sm">
+              {[
+                { label: 'DR. VIRGINIA DEVONSHIRE', value: 'DR. VIRGINIA DEVONSHIRE' },
+                { label: 'DR. ANTHONY TRABOULSEE', value: 'DR. ANTHONY TRABOULSEE' },
+                { label: 'DR. ANA-LUIZA SAYAO', value: 'DR. ANA-LUIZA SAYAO' },
+                { label: 'DR. ROBERT CARRUTHERS', value: 'DR. ROBERT CARRUTHERS' },
+                { label: 'DR. ALICE SCHABAS', value: 'DR. ALICE SCHABAS' },
+              ].map(({ label, value }) => (
+                <label key={value} className="inline-flex items-center mb-2">
+                  <Field
+                    type="radio"
+                    id={value}
+                    name="physicians"
+                    value={value}
+                    className="form-radio text-blue-600"
+                  />
+                  <span className="ml-2">{label}</span>
+                </label>
+              ))}
+            </div>
+            <ErrorMessage name="physicians" component="p" className="text-red-500 text-xs mt-1" />
           </div>
 
           
@@ -349,7 +418,7 @@ function App() {
                 { label: 'Tysabri (Natalizumab)', value: 'Tysabri (Natalizumab)' },
                 { label: 'I am not on therapy for MS/NMO', value: 'I am not on therapy for MS/NMO' },
               ].map(({ label, value }) => (
-                <label key={value} className="mr-4 mb-2">
+                <label key={value} className="inline-flex items-center mb-2">
                   <Field
                     type="radio"
                     name="typeOfTherapiesCheckbox"
@@ -363,8 +432,8 @@ function App() {
               <label className="mr-4 mb-2">
                 <Field
                   type="radio"
-                  name="typeOfTherapiesCheckbox"
-                  value="Other"
+                  name="otherTherapyRadio"
+                  value="otherTherapyRadio"
                   className="mr-2"
                 />
                 Other
@@ -385,7 +454,7 @@ function App() {
           {/* Primary Insurance Provider */}
             <div className="mb-4">
               <label htmlFor="primaryInsuranceProvider" className="block text-sm font-bold mb-2">
-               Name of Private Insurance Provider:
+               Name of Private Insurance Provider: <Optional />
               </label>
               <Field
                 type="text"
@@ -397,9 +466,9 @@ function App() {
             </div>
 
             {/* Insurer Contract # */}
-            <div className="mb-4">
+            <div className="mb-4 ">
               <label htmlFor="insurerContract" className="block text-sm font-bold mb-2">
-                Insurer Group/Contract/Plan #:
+                Insurer Group/Contract/Plan #: <Optional />
               </label>
               <Field
                 type="text"
@@ -413,7 +482,7 @@ function App() {
             {/* Insurer Certificate # */}
             <div className="mb-4">
               <label htmlFor="insurerCertificate" className="block text-sm font-bold mb-2">
-                Insurer Certificate #:
+                Insurer Certificate #: <Optional />
               </label>
               <Field
                 type="text"
@@ -429,7 +498,7 @@ function App() {
 
 
             {/* Patient Consent Text */}
-              <div className="mb-4">
+              <div className="mb-4 page-break-after">
 
               <h3 className="mb-2 font-bold">PATIENT CONSENT TO ENROL IN AND RECEIVE SERVICES FROM SENTREX</h3>
                 <p className="text-sm mb-4 whitespace-pre-line">
@@ -452,29 +521,36 @@ function App() {
 
 
               {/* I AM Patien Consent */}
-          <div className="mb-4" >
-          <h3 className="mb-4 font-bold flex-none">PATIENT CONSENT </h3>
-          <div className="flex items-end">
-            <label htmlFor="thePatientConsent" className="inline-block text-sm font-bold mb-2 mr-2">
-              I am:
-            </label>
-            <Field
-              as="select"
-              id="thePatientConsent"
-              name="thePatientConsent"
-              className="flex px-3 py-1.5 border rounded-md focus:outline-none focus:border-blue-500"
-              onChange={(e) =>(handleShowHide(e))}
-            >
-              <option value="">Please select one of the following options</option>
-              <option value="thePatient">The patient</option>
-              <option value="theSDM">The patient’s Substitute Decision Maker (SDM) </option>
-              <option value="theHCP">An HCP obtaining verbal consent on behalf of the patient</option>
-              
-            </Field>
-            <ErrorMessage name="thePatientConsent" component="p" className="text-red-500 text-xs mt-1" />
-            </div>
+              <div className="mb-4">
+  <h3 className="mb-4 font-bold ">PATIENT CONSENT </h3>
+  <div className="flex">
+    <label className="text-sm font-bold mb-2 mr-2">I am:</label>
+    <div className="flex flex-col">
+      {[
+        { label: 'The patient', value: 'thePatient' },
+        { label: 'The patient’s Substitute Decision Maker (SDM)', value: 'theSDM' },
+        { label: 'An HCP obtaining verbal consent on behalf of the patient', value: 'theHCP' },
+      ].map(({ label, value }) => (
+        <label key={value} className="mr-4">
+          <Field
+            type="radio"
+            id={value}
+            name="thePatientConsent"
+            value={value}
+            className=" text-blue-600"
+            onClick={(e) => handleShowHide(e)}
+            
+            
+          />
+          <span className="ml-2">{label}</span>
+        </label>
+      ))}
+    </div>
+    <ErrorMessage name="thePatientConsent" component="p" className="text-red-500 text-xs mt-1" />
+  </div>
+</div>
 
-          </div>
+          {/* </div> */}
 
 
            {/* IF I AM PATIENT is SELECTED */}
@@ -718,11 +794,16 @@ function App() {
           Submit Consent Form
         </button>
 
+
         
       </Form>
     </Formik>
+
   </div>
+
+
 );
+
 }
 
 export default App;
