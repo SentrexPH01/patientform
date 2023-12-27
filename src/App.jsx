@@ -8,7 +8,10 @@ import textTermsAndConditions from "./TextContent";
 import { useState } from "react";
 import logo from '/vch-logo.svg'
 import sentrexLogo from '/Logo_Sentrex.png'
-// import html2pdf from "html2pdf.js";
+
+
+
+
 
 
 
@@ -30,28 +33,6 @@ const Optional = () => (
 
 )
 
-// const generatePdf = async () => {
-//   try {
-//     const formElement = document.getElementById('patient-form');
-//     // const pdfOptions = {
-//     //   margin: [10,10],
-//     //   filename: 'consent_form.pdf',
-//     //   image: { type: 'jpeg', quality: 0.98 },
-//     //   html2canvas: { scale: 1.5, letterRendering: true },
-//     //   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', putOnlyUsedFonts:true, floatPrecision: 16 },
-//     //   pagebreak: {
-//     //     mode: ['avoid-all', 'css', 'legacy'],
-//     //     before: '.page-break-after',
-//     //   }
-      
-//     // };
-
-//     await html2pdf().from(formElement).set().save();
-//     console.log('PDF generated successfully');
-//   } catch (error) {
-//     console.error('Error generating PDF:', error);
-//   }
-// };
 
 // const yourClientId = import.meta.env.VITE_AZURE_CLIENT_ID;
 // const yourClientSecret = import.meta.env.VITE_AZURE_CLIENT_SECRET;
@@ -59,6 +40,8 @@ const Optional = () => (
 // const yourSharePointSiteUrl = import.meta.env.VITE_SHAREPOINT_SITE_URL;
 // const yourListName = import.meta.env.VITE_SHAREPOINT_LIST_NAME;
 // const yourAccessToken = import.meta.env.VITE_ACCESS_TOKEN;
+
+
 
 const validationSchema = Yup.object().shape({
   address: Yup.string().required("Address is required"),
@@ -91,8 +74,8 @@ const initialValues = {
 
 
 
-// const onSubmit = async (values, { setSubmitting }) => {
-//   try {
+const onSubmit = async (values, { setSubmitting }) => {
+  try {
 
     
 //     // // Make HTTP POST request to SharePoint API
@@ -137,15 +120,15 @@ const initialValues = {
 //   //   console.error('Error submitting to SharePoint:', error);
 //   // } finally {
 //   //   setSubmitting(false);
-//   await generatePdf();
-//   // }
-// } catch (error) {
-//   console.error('Error generating PDF:', error);
-// } finally {
-//   setSubmitting(false);
+await NewFormTitle();
+  // }
+} catch (error) {
+  console.error('Error generating PDF:', error);
+} finally {
+  setSubmitting(false);
 
-// }
-// };
+}
+};
 
 function App() {
 
@@ -164,10 +147,10 @@ function App() {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      // onSubmit={onSubmit}
+      onSubmit={onSubmit}
     >
       <Form id="patient-form"
-      className="w-full max-w-5xl bg-white p-8 rounded-md shadow-md">
+      className="w-full max-w-5xl bg-white p-12 rounded-md shadow-md">
         
         <div className="flex justify-between">
         <img className="h-10 w-35"src={logo} alt='logo' /><img className="h-10 w-35" src={sentrexLogo} alt='logo' />
@@ -372,17 +355,17 @@ function App() {
           </div>
 
           {/* Physician Field*/}
-          <div className="mb-4">
+          <div className="mb-4 page-break">
             <label htmlFor="physician" className="block text-sm font-bold pb-2">
               Physician Name:
             </label>
             <div className="flex flex-col text-sm">
               {[
-                { label: 'DR. VIRGINIA DEVONSHIRE', value: 'DR. VIRGINIA DEVONSHIRE' },
-                { label: 'DR. ANTHONY TRABOULSEE', value: 'DR. ANTHONY TRABOULSEE' },
-                { label: 'DR. ANA-LUIZA SAYAO', value: 'DR. ANA-LUIZA SAYAO' },
-                { label: 'DR. ROBERT CARRUTHERS', value: 'DR. ROBERT CARRUTHERS' },
-                { label: 'DR. ALICE SCHABAS', value: 'DR. ALICE SCHABAS' },
+                { label: 'Dr. Virginia Devonshire (ID# 13005)', value: 'Dr. Virginia Devonshire (ID# 13005)' },
+                { label: 'Dr. Anthony Traboulsee (ID# 18049)', value: 'Dr. Anthony Traboulsee (ID# 18049)' },
+                { label: 'Dr. Ana-luiza Sayao (ID# 24217)', value: 'Dr. Ana-luiza Sayao (ID# 24217)' },
+                { label: 'Dr. Robert Carruthers (ID# 39947)', value: 'Dr. Robert Carruthers (ID# 39947)' },
+                { label: 'Dr. Alice Schabas (ID# 32711)', value: 'Dr. Alice Schabas (ID# 32711)' },
               ].map(({ label, value }) => (
                 <label key={value} className="inline-flex items-center mb-2">
                   <Field
@@ -498,9 +481,8 @@ function App() {
 
 
             {/* Patient Consent Text */}
-              <div className="mb-4 page-break-after">
-
-              <h3 className="mb-2 font-bold">PATIENT CONSENT TO ENROL IN AND RECEIVE SERVICES FROM SENTREX</h3>
+              <div className="mb-4 page-break">
+              <label className="mb-2 font-bold">PATIENT CONSENT TO ENROL IN AND RECEIVE SERVICES FROM SENTREX</label>
                 <p className="text-sm mb-4 whitespace-pre-line">
                 {textTermsAndConditions}
                 </p>
@@ -521,7 +503,7 @@ function App() {
 
 
               {/* I AM Patien Consent */}
-              <div className="mb-4">
+              <div className="mb-4 ">
   <h3 className="mb-4 font-bold ">PATIENT CONSENT </h3>
   <div className="flex">
     <label className="text-sm font-bold mb-2 mr-2">I am:</label>
